@@ -1,11 +1,14 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include <chrono>
 #include <thread>
 
 using namespace cv;
 using namespace std;
 
-void convertToGrayscaleThread(Mat& image, int start_row, int end_row) {
+const int MAX_THREADS = 8;  // Número máximo de hilos (ajusta según sea necesario)
+
+void convertirGrisParalelo(Mat& image, int start_row, int end_row) {
     for (int r = start_row; r < end_row; ++r) {
         for (int c = 0; c < image.cols; ++c) {
             Vec3b pixel = image.at<Vec3b>(r, c);
@@ -15,29 +18,51 @@ void convertToGrayscaleThread(Mat& image, int start_row, int end_row) {
     }
 }
 
-int main() {
-    Mat image = imread("imagenacolor.jpg", IMREAD_COLOR);
+void procesarRango(Mat& image, int num_threads) {
+    int rows = image.rows;
+    int chunk_size = rows / num_threads;
 
-    if (image.empty()) {
-        cerr << "Error al cargar la imagen." << endl;
+    thread threads[MAX_THREADS];
+
+    for (int i = 0; i < num_threads; ++i) {
+        int start_row = i * chunk_size;
+        int end_row = (i == num_threads - 1) ? rows : (i + 1) * chunk_size;
+
+        threads[i] = thread(convertirGrisParalelo, ref(image), start_row, end_row);
+    }
+
+    for (int i = 0; i < num_threads; ++i) {
+        threads[i].join();
+    }
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 4) {
+        cerr << "Uso: " << argv[0] << " <imagenEntrada> <nombreSalida> <numHilos>" << endl;
         return -1;
     }
 
-    int num_threads = 4; // ajusta según sea necesario
-    int rows_per_thread = image.rows / num_threads;
-    vector<thread> threads;
+    string inputImageName = argv[1];
+    string outputImageName = argv[2];
+    int num_threads = stoi(argv[3]);
 
-    for (int i = 0; i < num_threads; ++i) {
-        int start_row = i * rows_per_thread;
-        int end_row = (i == num_threads - 1) ? image.rows : (i + 1) * rows_per_thread;
-        threads.emplace_back(convertToGrayscaleThread, ref(image), start_row, end_row);
+    auto start_time = chrono::high_resolution_clock::now();
+
+    Mat image = imread(inputImageName, IMREAD_COLOR);
+
+    if (image.empty()) {
+        cerr << "Error al cargar la imagen de entrada." << endl;
+        return -1;
     }
 
-    for (auto& t : threads) {
-        t.join();
-    }
+    procesarRango(image, num_threads);
 
-    imwrite("resultado_thread.jpg", image);
+    auto end_time = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::milliseconds>(end_time - start_time);
+
+    imwrite(outputImageName, image);
+
+    cout << "Tiempo total de ejecución: " << duration.count() << " ms" << endl;
 
     return 0;
 }
