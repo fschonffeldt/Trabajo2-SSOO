@@ -1,11 +1,12 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include <chrono>
 #include <omp.h>
 
 using namespace cv;
 using namespace std;
 
-void convertToGrayscaleOpenMP(Mat& image) {
+void convertirGrisParaleloOpenMP(Mat& image) {
     #pragma omp parallel for
     for (int r = 0; r < image.rows; ++r) {
         for (int c = 0; c < image.cols; ++c) {
@@ -16,18 +17,39 @@ void convertToGrayscaleOpenMP(Mat& image) {
     }
 }
 
-int main() {
-    Mat image = imread("imagenacolor.jpg", IMREAD_COLOR);
-
-    if (image.empty()) {
-        cerr << "Error al cargar la imagen." << endl;
+int main(int argc, char *argv[]) {
+    if (argc != 4) {
+        cerr << "Uso: " << argv[0] << " <imagenEntrada> <nombreSalida> <numHilos>" << endl;
         return -1;
     }
 
-    convertToGrayscaleOpenMP(image);
+    string inputImageName = argv[1];
+    string outputImageName = argv[2];
+    int num_threads = stoi(argv[3]);
 
-    imwrite("resultado_openmp.jpg", image);
+    auto start_time = chrono::high_resolution_clock::now();
+
+    omp_set_num_threads(num_threads);
+
+    Mat image = imread(inputImageName, IMREAD_COLOR);
+
+    if (image.empty()) {
+        // Intentar abrir desde el directorio actual si la ruta completa falla
+        image = imread(string("./") + inputImageName, IMREAD_COLOR);
+
+        if (image.empty()) {
+            cerr << "Error al cargar la imagen de entrada: " << inputImageName << endl;
+            return -1;
+        }
+    }
+    convertirGrisParaleloOpenMP(image);
+
+    auto end_time = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::milliseconds>(end_time - start_time);
+
+    imwrite(outputImageName, image);
+
+    cout << "Tiempo total de ejecución: " << duration.count() << " ms" << endl;
 
     return 0;
 }
-
