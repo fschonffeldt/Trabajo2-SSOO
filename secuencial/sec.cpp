@@ -1,5 +1,6 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include <chrono>
 
 using namespace cv;
 using namespace std;
@@ -15,7 +16,14 @@ void convertToGrayscale(Mat& image) {
 }
 
 int main() {
-    Mat image = imread("imagenacolor.jpg", IMREAD_COLOR);
+    // Solicitar al usuario la ruta de la imagen de entrada
+     string imagePath;
+     getline(cin, imagePath);
+
+    // Medir el tiempo de ejecución
+    auto start_time = chrono::high_resolution_clock::now();
+
+    Mat image = imread(imagePath, IMREAD_COLOR);
 
     if (image.empty()) {
         cerr << "Error al cargar la imagen." << endl;
@@ -24,7 +32,15 @@ int main() {
 
     convertToGrayscale(image);
 
-    imwrite("resultado_secuencial.jpg", image);
+    // Medir el tiempo total
+    auto end_time = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::milliseconds>(end_time - start_time);
+
+    imwrite("secuencial.jpg", image);
+
+    cout << "Imagen en escala de grises guardada como: secuencial.jpg" << endl;
+    cout << "Tiempo total de ejecución: " << duration.count() << " ms" << endl;
 
     return 0;
 }
+
