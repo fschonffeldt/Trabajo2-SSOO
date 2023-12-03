@@ -62,7 +62,8 @@ int main(int argc, char *argv[]) {
 
     imwrite(outputImageName, image);
 
-    cout << "Tiempo total de ejecución: " << duration.count() << " ms" << endl;
+	cout << fixed << setprecision(6);
+	cout << "Tiempo total de ejecución: " << duration.count() / 1000.0 << " segundos" << endl;
 
     return 0;
 }

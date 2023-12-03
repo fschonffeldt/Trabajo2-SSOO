@@ -1,14 +1,14 @@
-# Makefile para la versión secuencial
-
-CC = g++
+C = g++
 CFLAGS = -std=c++11 -Wall
 LIBS = `pkg-config --cflags --libs opencv4`
 
-all:	secuencial
+TARGET = secuencial
+SOURCE = sec.cpp
 
-secuencial:	sec.cpp
-	$(CC) $(CFLAGS) -o secuencial sec.cpp $(LIBS)
+all: $(TARGET)
+
+$(TARGET): $(SOURCE)
+	$(C) $(CFLAGS) -o $(TARGET) $(SOURCE) $(LIBS)
 
 clean:
-	rm -f secuencial
-
+	rm -f $(TARGET)
