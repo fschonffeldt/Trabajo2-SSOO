@@ -1,8 +1,11 @@
 ## Introducción
 Los siguientes 3 codigos estan creados en c++ linux,permiten transformar una imagen a color formato .jpg 
 a una imagen en escalas de grises 
+
 El codigo secuencial spermite transformar la imagen a escalas de grises analizando la matriz sin ninguna libreria o funcion disponible.
+
 El codigo openMP  permite transformar la imagen a escala de grises a travez de un procesamiento en paralelo utilizando la libreria openMP.
+
 El codigo thread  permite transformar la imagen a escala de grises a travez de un procesamiento en paralelo utilizando la libreria thread.
 
 ## Paso 1: clonar git
