@@ -1,5 +1,9 @@
 ## Introducción
-
+Los siguientes 3 codigos estan creados en c++ linux,permiten transformar una imagen a color formato .jpg 
+a una imagen en escalas de grises
+El codigo secuencial se analiza la matriz sin ninguna libreria o funcion disponible.
+El codigo openMP  permite transformar la imagen a escala de grises a travez de un procesamiento en paralelo utilizando la libreria openMP.
+El codigo thread  permite transformar la imagen a escala de grises a travez de un procesamiento en paralelo utilizando la libreria thread.
 
 ## Paso 1: clonar git
 
@@ -13,7 +17,6 @@
 4. Luego escriba por consola apt install python3.opencv, esta libreria incluye todas las dependencias necesaria de Opencv
 
 ## Paso 3: cambio de ubicacion de la libreria Opencv
-Por defecto la libreria no se guarda                                       por lo tanto hay que cambiarla de ubicacion 
 
 1. Primero hay que encontrar la ubicacion de a libreria Opencv, para lograrlo lo hacemos con el siguiente comando dpkg -L libopencv -dev | grep pkgconfig.
 2. Esto dara 2 rutas y se eligira la segunda /usr/lib/aarch64-linux-gnu/pkgconfig/opencv4.pc
