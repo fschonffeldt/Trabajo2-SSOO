@@ -4,13 +4,11 @@ CC = g++
 CFLAGS = -std=c++11 -Wall
 LIBS = `pkg-config --cflags --libs opencv4`
 
-TARGET = secuencial
-SOURCE = sec.cpp
+all: ser_gris
 
-all: $(TARGET)
-
-$(TARGET): $(SOURCE)
-        $(CXX) $(CXXFLAGS) -o $(TARGET) $(SOURCE) $(LIBS)
+secuencial: sec.cpp
+    $(CC) $(CFLAGS) -o secuencial  sec.cpp $(LIBS)
 
 clean:
-        rm -f $(TARGET)
+    rm -f secuencial
+
